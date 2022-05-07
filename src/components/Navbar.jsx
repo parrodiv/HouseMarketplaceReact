@@ -9,7 +9,7 @@ function Navbar() {
       <nav className="navbarNav">
         <ul className="navbarListItems">
           <li className="navbarListItem">
-            <NavLink to="/">
+            <NavLink to="/" className="navbarListItem">
               {({ isActive }) => (
                 <>
                   <ExploreIcon
@@ -31,7 +31,7 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="navbarListItem">
-            <NavLink to="/offers">
+            <NavLink to="/offers" className="navbarListItem">
               {({ isActive }) => (
                 <>
                   <OfferIcon
@@ -53,7 +53,7 @@ function Navbar() {
             </NavLink>
           </li>
           <li className="navbarListItem">
-            <NavLink to="/profile">
+            <NavLink to="/profile" className="navbarListItem">
               {({ isActive }) => (
                 <>
                   <PersonOutlineIcon
