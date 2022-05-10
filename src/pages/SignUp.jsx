@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {getAuth, createUserWithEmailAndPassword, updateProfile} from 'firebase/auth'
+import {doc, setDoc, serverTimestamp} from 'firebase/firestore'
 import {db} from '../firebase.config'
 import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
 import visibilityIcon from '../assets/svg/visibilityIcon.svg';
@@ -33,17 +34,31 @@ function SignUp() {
       const auth = getAuth();
       console.log(auth);
 
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       console.log(userCredential);
 
-      const user = userCredential.user
-      console.log(user)
+      const user = userCredential.user;
+      console.log(user);
 
       updateProfile(auth.currentUser, {
-        displayName: name
-      })
+        displayName: name,
+      });
 
-      navigate('/')
+      const formDataCopy = { ...formData };
+      delete formDataCopy.password; //delete password from formDataCopy obj because obviously I don't want it is visible in database
+      formDataCopy.timestamp = serverTimestamp();
+
+      // Add a new document in collection "users"
+      await setDoc(doc(db, "users", user.uid), formDataCopy);
+      //update the database and add our user to the users collection
+      //https://firebase.google.com/docs/firestore/manage-data/add-data?hl=it&authuser=0
+
+      navigate('/');
+
     } catch (error) {
       console.log(error);
     }
