@@ -49,7 +49,7 @@ function SignUp() {
       });
 
       const formDataCopy = { ...formData };
-      delete formDataCopy.password; //delete password from formDataCopy obj because obviously I don't want it is visible in database
+      delete formDataCopy.password; //delete password from formDataCopy obj because obviously I don't want that it is visible on database
       formDataCopy.timestamp = serverTimestamp();
 
       // Add a new document in collection "users"
