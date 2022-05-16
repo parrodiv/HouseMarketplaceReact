@@ -11,6 +11,7 @@ const PrivateRoute = () => {
     return <Spinner />
   }
 
+  //se sono loggato ritorna il component Profile, vedi App.js r.20-21
   return loggedIn ? <Outlet /> : <Navigate to='/sign-in' />
 }
 

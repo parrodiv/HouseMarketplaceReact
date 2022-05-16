@@ -10,7 +10,7 @@ const useAuthStatus = () => {
   const [loggedIn, setLoggedIn] = useState(false)
   const [loading, setLoading] = useState(true)
 
-   const auth = getAuth();
+  const auth = getAuth();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
