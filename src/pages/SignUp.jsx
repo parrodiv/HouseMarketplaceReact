@@ -4,6 +4,7 @@ import {getAuth, createUserWithEmailAndPassword, updateProfile} from 'firebase/a
 import {doc, setDoc, serverTimestamp} from 'firebase/firestore'
 import {db} from '../firebase.config'
 import { ReactComponent as ArrowRightIcon } from '../assets/svg/keyboardArrowRightIcon.svg';
+import OAuth from '../components/OAuth';
 import visibilityIcon from '../assets/svg/visibilityIcon.svg';
 
 function SignUp() {
@@ -49,7 +50,7 @@ function SignUp() {
       });
 
       const formDataCopy = { ...formData };
-      delete formDataCopy.password; //delete password from formDataCopy obj because obviously I don't want that it is visible on database
+      delete formDataCopy.password; //delete password from formDataCopy obj because obviously I don't want that it'll be visible on database
       formDataCopy.timestamp = serverTimestamp();
 
       // Add a new document in collection "users"
@@ -122,7 +123,7 @@ function SignUp() {
           </div>
         </form>
 
-        {/* Google 0Auth */}
+        < OAuth />
 
         <Link to="/sign-in" className="registerLink">
           Sign In Instead
