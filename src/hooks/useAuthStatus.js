@@ -20,7 +20,7 @@ const useAuthStatus = () => {
       setLoading(false);
     });
     return unsub
-  }, []);
+  }, [auth]);
 
   return {loggedIn, loading}
 }
