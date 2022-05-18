@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {Link} from 'react-router-dom'
 import { getAuth, updateProfile } from 'firebase/auth';
 import { updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase.config';
