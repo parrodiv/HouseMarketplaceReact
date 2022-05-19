@@ -24,8 +24,8 @@ function SignIn() {
       [e.target.id]: e.target.value,
       //The square brackets are for dynamically setting a object property using a variable, in this case the target elements id.
 
-      //la funzione viene resa "universale", quindi anche se ci fossero più input, l'importante sarebbe avere l'id dell'input uguale alla proprietà dell'oggetto.
-      //Se la funzione non fosse strutturato in questo modo, avrei dovuto creare una funzione per ogni input
+      //la funzione viene resa "universale", quindi anche se ci fossero più input, l'importante sarebbe avere l'id dell'input uguale alla proprietà dell'oggetto (formData).
+      //Se la funzione non fosse strutturata in questo modo, avrei dovuto creare una funzione per ogni input
       //ES: onChangeEmail ed onChangePassword
     }));
   };
