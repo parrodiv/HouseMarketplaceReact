@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
+import { toast } from 'react-toastify';
 
 const initialFormState = {
   type: 'rent',
@@ -14,7 +15,7 @@ const initialFormState = {
   offer: false,
   regularPrice: 0,
   discountedPrice: 0,
-  images: {},
+  images: [],
   latitude: 0,
   longitude: 0,
 };
@@ -58,50 +59,108 @@ function CreateListing() {
   // https://www.udemy.com/course/react-front-to-back-2022/learn/lecture/29769164#questions/16680132
   //The linter warns us that we have a missing dependency of formData because we are using it in useEffect, React knows it may change but we are using it in useEffect so useEffect needs to know if it changed. But if we include it as a dependency then useEffect will run whenever we update it and you will get infinite renders because we are calling setFormData in useEffect.
 
-  //SE AVESSIMO INSERITO ...formData invece che ...intialFormState avremmo ricevuto un warning che consiglia di inserire il formData come dipendenza, il che genererebbe un loop infinito andando a risettare continuamente il formData state con setFormData
+  //SE AVESSIMO INSERITO ...formData invece che ...intialFormState avremmo ricevuto un warning che consiglia di inserire il formData come dipendenza, il che genererebbe un loop infinito andando a risettare continuamente il formData state con setFormData all'interno di useEffect
 
   //With declaring initalFormState outside of the component this guarantees it never changes, it's the same object in memory every time. So you won't get any linter warnings for it.
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+
+    setLoading(true);
+
+    if (images.length > 6 || images.length < 1) {
+      setLoading(false);
+      toast.error('Uploaded images are required and must be at most 6');
+      return; //il return funge da blocco per non far proseguire il codice
+    }
+
+    if (discountedPrice >= regularPrice) {
+      setLoading(false);
+      toast.error('discounted price must be less than regular price');
+      return;
+    }
+
+    //GEOLOCATION WITH positionstackAPI
+    let geolocation = {}; //geolocation {lat: , lng: } in firestore we set data in this format style
+    let location; //it will contain address
+
+    if (geolocationEnabled) {
+      try {
+        //INSERTED WITH GEOLOCATION ENABLED
+        const response = await fetch(
+          `http://api.positionstack.com/v1/forward?access_key=${process.env.REACT_APP_GEOCODE_API_KEY}&query=${address}`
+        );
+
+        const data = await response.json();
+
+        console.log(data.data[0]);
+        // SE L'ADDRESS INSERITO NEL FORM E' SBAGLIATO IL RISULTATO DI data.data[0] SARA' undefined. PER QUESTO INSERISCO IL PUNTO DI DOMANDA .data[0]?. ALTRIMENTI DAREBBE QUESTO ERRORE: 'Uncaught TypeError: Cannot read properties of undefined (reading 'latitude')
+        geolocation.lat = data.data[0]?.latitude ?? 0;
+        geolocation.lng = data.data[0]?.longitude ?? 0;
+        // if data.results[0] does not exist, we need to return undefined immediately, so that it will evaluate to the default value of 0.
+
+        location =
+          data.data.length < 1
+            ? undefined
+            : `${data.data[0]?.postal_code}, ${data.data[0]?.label}`;
+
+        console.log(location); 
+        //if data.data[0] doesn't exists it will be undefined
+
+        if(location === undefined){
+          setLoading(false)
+          toast.error('Please enter a correct address')
+          return
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error('Failure with fetch geolocation');
+      }
+    } else {
+      // INSERTED MANUALLY WITHOUT GEOLOCATION
+      geolocation.lat = latitude;
+      geolocation.lng = longitude;
+      location = address;
+    }
+
+    setLoading(false);
   };
 
   const onMutate = (e) => {
-    let boolean = null
+    let boolean = null;
 
-    if(e.target.value === 'true') {
-    boolean = true
+    if (e.target.value === 'true') {
+      boolean = true;
     }
 
-    if(e.target.value === 'false') {
-    boolean = false
+    if (e.target.value === 'false') {
+      boolean = false;
     }
 
     //Files
-    if(e.target.files){
+    if (e.target.files) {
       setFormData((prevState) => ({
         ...prevState,
-        images: e.target.files //arr of images
-      }))
+        images: e.target.files, //arr of images
+      }));
     }
     // console.log(e.target.files);
     // se il click avviene nel input:file dopo aver selezionato l'img o imgs in console appare un array con le immagini
 
-
     //Text / Booleans / Numbers
-    if(!e.target.files){
+    if (!e.target.files) {
       setFormData((prevState) => ({
         ...prevState,
-        // se boolean è null restituisci e.target.value (for text field)
+        // se boolean è null restituisci e.target.value (for text field / numbers)
         // se boolean è true o false allora non viene considerato il e.target.value
-        [e.target.id]: boolean ?? e.target.value
-      }))
-      console.log(boolean); 
+        [e.target.id]: boolean ?? e.target.value,
+      }));
+      // console.log(boolean);
+      // console.log(e.target.value);
     }
     // console.log(e.target.value);
   };
-
 
   return loading ? (
     <Spinner />
@@ -336,7 +395,6 @@ function CreateListing() {
             max="6"
             accept=".jpg,.png,.jpeg"
             multiple
-            required
           />
 
           <button className="primaryButton createListingButton" type="submit">
