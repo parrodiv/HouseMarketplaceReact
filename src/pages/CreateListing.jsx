@@ -131,7 +131,6 @@ function CreateListing() {
       // INSERTED MANUALLY WITHOUT GEOLOCATION
       geolocation.lat = latitude;
       geolocation.lng = longitude;
-      location = address;
     }
 
     // STORE IMAGE IN FIREBASE STORAGE
@@ -197,29 +196,28 @@ function CreateListing() {
       ...formData,
       imgUrls,
       geolocation,
-      timestamp: serverTimestamp()
+      timestamp: serverTimestamp(),
     };
 
+    //set location universal for both cases (with geocoding or manual entry of coordinates) because sometimes the address is not taken correctly by the geocode API
+    formDataCopy.location = address
+
     //delete images arr from formDataCopy because i alredy have imgUrls
-    delete formDataCopy.images
+    delete formDataCopy.images;
 
     //delete address because i already have location that will contain address
-    delete formDataCopy.address
-
-    // if there is location add it to formDataCopy obj
-    location && (formDataCopy.location = location)
+    delete formDataCopy.address;
 
     //if there is no offer, delete discounted price
-    !formDataCopy.offer && delete formDataCopy.discountedPrice
+    !formDataCopy.offer && delete formDataCopy.discountedPrice;
 
     console.log(formDataCopy);
 
-    const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
-   
+    const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
 
     setLoading(false);
-    toast.success('Listing saved')
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`)
+    toast.success('Listing saved');
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
   };
   
 
