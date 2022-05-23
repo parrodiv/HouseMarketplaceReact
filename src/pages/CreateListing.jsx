@@ -6,6 +6,7 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
+import {addDoc, collection, serverTimestamp} from 'firebase/firestore'
 import {db} from '../firebase.config'
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
@@ -112,15 +113,15 @@ function CreateListing() {
         location =
           data.data.length < 1
             ? undefined
-            : `${data.data[0]?.postal_code}, ${data.data[0]?.label}`;
+            : `${data.data[0]?.postal_code ?? ''} ${data.data[0]?.label}`;
 
-        console.log(location); 
+        console.log(location);
         //if data.data[0] doesn't exists it will be undefined
 
-        if(location === undefined){
-          setLoading(false)
-          toast.error('Please enter a correct address')
-          return
+        if (location === undefined) {
+          setLoading(false);
+          toast.error('Please enter a correct address');
+          return;
         }
       } catch (error) {
         console.log(error);
@@ -134,15 +135,16 @@ function CreateListing() {
     }
 
     // STORE IMAGE IN FIREBASE STORAGE
+    // after inserting the images in the form, onMutate function is set to create some sort of image array
     const storeImage = async (image) => {
+      // image will be object in images array that will be passed trough a map function
       return new Promise((resolve, reject) => {
-        const storage = getStorage()
-        const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`
+        const storage = getStorage();
+        const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
 
-        const storageRef = ref(storage, 'images/' + fileName)
-        console.log(storageRef);
+        const storageRef = ref(storage, 'images/' + fileName);
 
-        const uploadTask = uploadBytesResumable(storageRef, image)
+        const uploadTask = uploadBytesResumable(storageRef, image);
 
         uploadTask.on(
           'state_changed',
@@ -162,7 +164,7 @@ function CreateListing() {
             }
           },
           (error) => {
-            reject(error)
+            reject(error);
           },
           () => {
             // Handle successful uploads on complete
@@ -173,25 +175,51 @@ function CreateListing() {
             });
           }
         );
-      })
-    }
+      });
+    };
 
     //The storeImage function only stores one image at a time, so in order to call it multiple times and essentially do something when they are all uploaded you would need the storeImage function to return a Promise, that you can await the resolution of somewhere else when you use the function.
 
     console.log(images);
+
     const imgUrls = await Promise.all(
       // loop trough images array
-      [...images].map(image => storeImage(image))
+      [...images].map((image) => storeImage(image))
     ).catch(() => {
-      setLoading(false)
-      toast.error('Images not uploaded')
-      return
-    })
-    
+      setLoading(false);
+      toast.error('Images not uploaded');
+      return;
+    });
 
-    console.log(imgUrls);
+    // console.log(imgUrls);
+
+    const formDataCopy = {
+      ...formData,
+      imgUrls,
+      geolocation,
+      timestamp: serverTimestamp()
+    };
+
+    //delete images arr from formDataCopy because i alredy have imgUrls
+    delete formDataCopy.images
+
+    //delete address because i already have location that will contain address
+    delete formDataCopy.address
+
+    // if there is location add it to formDataCopy obj
+    location && (formDataCopy.location = location)
+
+    //if there is no offer, delete discounted price
+    !formDataCopy.offer && delete formDataCopy.discountedPrice
+
+    console.log(formDataCopy);
+
+    const docRef = await addDoc(collection(db, 'listings'), formDataCopy)
+   
 
     setLoading(false);
+    toast.success('Listing saved')
+    navigate(`/category/${formDataCopy.type}/${docRef.id}`)
   };
   
 
@@ -214,7 +242,7 @@ function CreateListing() {
       }));
     }
     // console.log(e.target.files);
-    // se il click avviene nel input:file dopo aver selezionato l'img o imgs in console appare un array con le immagini
+    // se il click avviene nel input:file dopo aver selezionato l'img o imgs in console appare un similar-array con le immagini
 
     //Text / Booleans / Numbers
     if (!e.target.files) {
