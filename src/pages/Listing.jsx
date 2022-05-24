@@ -37,8 +37,6 @@ function Listing() {
     return <Spinner />;
   }
 
-  console.log(listing);
-
   return (
     <main>
       {/*SLIDER*/}
@@ -46,9 +44,7 @@ function Listing() {
       <div
         className="shareIconDiv"
         onClick={() => {
-          {
-            /* COPY TEXT window.location.href = URL */
-          }
+          {/* COPY TEXT window.location.href = URL */}
           navigator.clipboard.writeText(window.location.href);
           setShareLinkCopied(true);
           setTimeout(() => {
@@ -64,7 +60,7 @@ function Listing() {
 
       <div className="listingDetails">
         <p className="listingName">
-          {listing.name} -
+          {listing.name} - 
           {listing.offer
             ? formatMoney(listing.discountedPrice)
             : formatMoney(listing.regularPrice)}
@@ -101,7 +97,7 @@ function Listing() {
         
         {/* CHECK IF CURRENT USER LOGGED IN IS THE SAME TO OWNER OF LISTING */}
         {auth.currentUser?.uid !== listing.userRef && (
-          <Link to={`/contact/${listing.userRef}?listingName=${listing.name}&listingLocation=${listing.location}`} className='primaryButton'>
+          <Link to={`/contact/${listing.userRef}?listingName=${listing.name}`} className='primaryButton'>
             Contact Landlord
           </Link>
         ) }

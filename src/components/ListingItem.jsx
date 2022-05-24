@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg';
 import bedIcon from '../assets/svg/bedIcon.svg';
 import bathtubIcon from '../assets/svg/bathtubIcon.svg';
+import formatMoney from '../Intl /formatMoney';
 
 function ListingItem({ listing, id, onDelete }) {
   return (
@@ -21,14 +22,19 @@ function ListingItem({ listing, id, onDelete }) {
 
           <p className="categoryListingPrice">
             {/* if listing.offer is true there will be a discounted price, else regular price */}
-            $
-            {listing.offer
+
+            {/* {listing.offer
               ? listing.discountedPrice
                   .toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
               : listing.regularPrice
                   .toString()
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+             */}
+
+            {listing.offer
+              ? formatMoney(`${listing.discountedPrice}`)
+              : formatMoney(`${listing.regularPrice}`)}
             {listing.type === 'rent' && ' / Month'}
           </p>
           <div className="categoryListingInfoDiv">
@@ -47,10 +53,14 @@ function ListingItem({ listing, id, onDelete }) {
           </div>
         </div>
       </Link>
-      
+
       {/* se viene passato onDelete come prop allora vedremo l'icon delete */}
       {onDelete && (
-        <DeleteIcon className='removeIcon' fill='rgb(231,76,60)' onClick={() => onDelete(listing.id, listing.name)} />
+        <DeleteIcon
+          className="removeIcon"
+          fill="rgb(231,76,60)"
+          onClick={() => onDelete(listing.id, listing.name)}
+        />
       )}
     </li>
   );
