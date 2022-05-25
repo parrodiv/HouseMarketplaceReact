@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase.config';
@@ -44,7 +45,9 @@ function Listing() {
       <div
         className="shareIconDiv"
         onClick={() => {
-          {/* COPY TEXT window.location.href = URL */}
+          {
+            /* COPY TEXT window.location.href = URL */
+          }
           navigator.clipboard.writeText(window.location.href);
           setShareLinkCopied(true);
           setTimeout(() => {
@@ -60,7 +63,7 @@ function Listing() {
 
       <div className="listingDetails">
         <p className="listingName">
-          {listing.name} - 
+          {listing.name} -
           {listing.offer
             ? formatMoney(listing.discountedPrice)
             : formatMoney(listing.regularPrice)}
@@ -93,14 +96,35 @@ function Listing() {
 
         <p className="listingLocationTitle">Location</p>
 
-        {/* MAP */}
-        
+        <div className="leafletContainer">
+          <MapContainer
+            style={{ height: '100%', width: '100%' }}
+            center={[listing.geolocation.lat, listing.geolocation.lng]}
+            zoom={13}
+            scrollWheelZoom={false}
+          >
+            <TileLayer
+              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png"
+            />
+
+            <Marker
+              position={[listing.geolocation.lat, listing.geolocation.lng]}
+            >
+              <Popup>{listing.location}</Popup>
+            </Marker>
+          </MapContainer>
+        </div>
+
         {/* CHECK IF CURRENT USER LOGGED IN IS THE SAME TO OWNER OF LISTING */}
         {auth.currentUser?.uid !== listing.userRef && (
-          <Link to={`/contact/${listing.userRef}?listingName=${listing.name}`} className='primaryButton'>
+          <Link
+            to={`/contact/${listing.userRef}?listingName=${listing.name}`}
+            className="primaryButton"
+          >
             Contact Landlord
           </Link>
-        ) }
+        )}
       </div>
     </main>
   );
