@@ -10,7 +10,6 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import 'swiper/css/a11y';
-
 import { getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '../firebase.config';
@@ -63,8 +62,7 @@ function Listing() {
             <img
               style={{ width: '100%', height: '450px' }}
               src={url}
-              alt="{listing.title}"
-              size='cover'
+              alt={listing.title}
             />
           </SwiperSlide>
         ))}
