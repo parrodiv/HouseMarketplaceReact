@@ -92,16 +92,20 @@ button {
 .listingDetails,
 .category,
 .explore {
-  margin: 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
 }
-@media (min-width: 1024px) {
+@media (min-width: 1300px) {
   .pageContainer,
   .offers,
   .profile,
   .listingDetails,
   .category,
   .explore {
-    margin: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    
   }
 }
 
@@ -400,6 +404,13 @@ button {
 .categoryListings {
   padding: 0;
 }
+@media(min-width: 1300px){
+  .categoryListings{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 1.2rem;
+  }
+}
 
 .categoryListing {
   display: flex;
@@ -414,16 +425,21 @@ button {
 }
 
 .categoryListingImg {
-  width: 30%;
-  height: 100px;
+  width: 40%;
+  max-width: 300px;
+  height: 130px;
   border-radius: 1.5rem;
   object-fit: cover;
   margin-top: 1.4rem;
+  margin-right: 1rem;
+
 }
 @media (min-width: 1024px) {
   .categoryListingImg {
-    width: 19%;
-    height: 217px;
+    width: 70%;
+    height: 160px;
+    margin-right: 2rem;
+    max-width: 300px;
   }
 }
 
