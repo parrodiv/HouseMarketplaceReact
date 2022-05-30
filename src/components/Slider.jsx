@@ -63,6 +63,11 @@ function Slider() {
     return <Spinner />;
   }
 
+  //If the arr lists is empty instead of the slide we would see the empty space that would be occupied by the slide if there were lists, by doing so I delete the empty space
+  if (listings.length === 0) {
+    return <></>;
+  }
+
   return (
     listings && (
       <>
@@ -90,7 +95,8 @@ function Slider() {
               />
               <p className="swiperSlideText">{data.name}</p>
               <p className="swiperSlidePrice">
-                {formatMoney(`${data.discountedPrice ?? data.regularPrice}`)}{' '}{data.type === 'rent' && '/ month'}
+                {formatMoney(`${data.discountedPrice ?? data.regularPrice}`)}{' '}
+                {data.type === 'rent' && '/ month'}
               </p>
             </SwiperSlide>
           ))}

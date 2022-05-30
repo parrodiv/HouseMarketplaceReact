@@ -62,7 +62,7 @@ function Profile() {
 
         setListings(listings);
         setLoading(false);
-        console.log(listings);
+        console.log(listings); //var not state
       } catch (error) {
         toast.error(error.message);
         console.log(error);
@@ -120,6 +120,8 @@ function Profile() {
       
     }
   }
+
+  const onEdit = (listingId) => navigate(`/edit-listing/${listingId}`);
   
   console.log(listings);
 
@@ -171,7 +173,7 @@ function Profile() {
         </div>
 
         <Link to="/create-listing" className="createListing">
-          <img src={homeIcon} alt="gome" />
+          <img src={homeIcon} alt="home" />
           <p>Sell or rent your home</p>
           <img src={arrowRight} alt="arrow" />
         </Link>
@@ -187,6 +189,7 @@ function Profile() {
                   listing={listing.data}
                   id={listing.id}
                   onDelete={() => onDelete(listing.id)}
+                  onEdit={() => onEdit(listing.id)}
                 />
               ))}
             </ul>

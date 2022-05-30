@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import {
@@ -6,9 +7,9 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from 'firebase/storage';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase.config';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { v4 as uuidv4 } from 'uuid';
 // allow to create a unique id
@@ -30,10 +31,11 @@ const initialFormState = {
   longitude: 0,
 };
 
-function CreateListing() {
+function EditListing() {
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
+  const [listing, setListing] = useState(null)
 
   //DESTRUCTURE
   const {
@@ -54,7 +56,45 @@ function CreateListing() {
 
   const auth = getAuth();
   const navigate = useNavigate();
+  const params = useParams()
 
+  // Redirect if listing is not user's
+  useEffect(() => {
+    if( listing && listing.userRef !== auth.currentUser.uid){
+      toast.error('You cannot edit that listing')
+      navigate('/')
+    }
+  }, [] )
+
+  // Fetch listing to edit from firestore
+  useEffect( () => {
+    setLoading(true)
+
+    const fetchListing = async () => {
+      try {
+        //ottengo uno specifico listing grazie al listingId contenuto nel URL
+        const docRef = doc(db, 'listings', params.listingId)
+        const docSnap = await getDoc(docRef);
+
+        if(docSnap.exists()){
+          setListing(docSnap.data())
+          // l'address è stato inserito nella prop location (vedi CreateListing.jsx r.200), quindi la prop address non è presente nel doc su firestore, abbiamo pubblicato solo location, qui invece inseriamo la prop address siccome nel input address il suo value sarà preso dalla variabile address estratta dal formData
+          setFormData({...docSnap.data(), address: docSnap.data().location})
+          setLoading(false)
+        }
+      } catch (error) {
+        setLoading(false)
+        toast.error(`Listing does not exist: ${error.message}`)
+        console.log(error);
+        navigate('/')
+      }
+      
+    }
+
+    fetchListing()
+  }, [params.listingId, navigate])
+
+  // Sets userRef to legged in user
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -79,7 +119,9 @@ function CreateListing() {
 
     setLoading(true);
 
-    if (images.length > 6 || images.length < 1) {
+    // if (images?.length > 6 || images?.length < 1) 
+    // if there are no images, images will be undefined because in r288 on onMutate function, e.target.files of an empty array will return a value of undefined
+      if (images === undefined) {
       setLoading(false);
       toast.error('Uploaded images are required and must be at most 6');
       return; //il return funge da blocco per non far proseguire il codice
@@ -110,7 +152,10 @@ function CreateListing() {
         geolocation.lng = data.data[0]?.longitude ?? 0;
         // if data.results[0] does not exist, we need to return undefined immediately, so that it will evaluate to the default value of 0.
 
-        location = data.data.length < 1 && undefined;
+        location =
+          data.data.length < 1
+            ? undefined
+            : `${data.data[0]?.postal_code ?? ''} ${data.data[0]?.label}`;
 
         console.log(location);
         //if data.data[0] doesn't exists it will be undefined
@@ -180,7 +225,8 @@ function CreateListing() {
 
     const imgUrls = await Promise.all(
       // loop trough images array
-      [...images].map((image) => storeImage(image))
+      // added question mark in order not to encounter an error in case of undefined of images arr
+      [...images]?.map((image) => storeImage(image))
     ).catch(() => {
       setLoading(false);
       toast.error('Images not uploaded');
@@ -210,11 +256,12 @@ function CreateListing() {
 
     console.log(formDataCopy);
 
-    const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
+    // Update Doc
+    await updateDoc(doc(db, 'listings', params.listingId), formDataCopy);
 
     setLoading(false);
     toast.success('Listing saved');
-    navigate(`/category/${formDataCopy.type}/${docRef.id}`);
+    navigate(`/category/${formDataCopy.type}/${params.listingId}`);
   };
 
   const onMutate = (e) => {
@@ -232,7 +279,8 @@ function CreateListing() {
     if (e.target.files) {
       setFormData((prevState) => ({
         ...prevState,
-        images: e.target.files, //list of images similar to arr
+        images: e.target.files,
+         //list of images similar to arr, if images is emtpy it will be undefined
       }));
     }
     // console.log(e.target.files);
@@ -257,7 +305,7 @@ function CreateListing() {
   ) : (
     <div className="profile">
       <header>
-        <p className="pageHeader">Create a Listing</p>
+        <p className="pageHeader">Edit a Listing</p>
       </header>
 
       <main>
@@ -488,7 +536,7 @@ function CreateListing() {
           />
 
           <button className="primaryButton createListingButton" type="submit">
-            Create Listing
+            Edit Listing
           </button>
         </form>
       </main>
@@ -496,4 +544,4 @@ function CreateListing() {
   );
 }
 
-export default CreateListing;
+export default EditListing;
