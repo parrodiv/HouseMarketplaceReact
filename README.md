@@ -35,7 +35,7 @@
 ### Sign In
 
 <div align='center'>
-<img src='./assets/screenshots/signIn.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/signIn.png' height= 'auto' width= '400px'>
 </div>
 <br>
 
@@ -45,7 +45,7 @@ You can register with email and password on the Sign Up page or you can use Goog
 ### Explore Page
 
 <div align='center'>
-<img src='./assets/screenshots/explorePage.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/explorePage.png' height= 'auto' width= '400px'>
 </div>
 <br>
 Explore page shows a slide with the recommended listings and the two types of listing categories for sale or for rent.
@@ -53,7 +53,7 @@ Explore page shows a slide with the recommended listings and the two types of li
 ### Offers Page
 
 <div align='center'>
-<img src='./assets/screenshots/offersPage.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/offersPage.png' height= 'auto' width= '400px'>
 </div>
 <br>
 In the offer page you can see the listings currently offering a discount on the price
@@ -61,14 +61,14 @@ In the offer page you can see the listings currently offering a discount on the 
 ### Listing Page
 
 <div align='center'>
-<img src='./assets/screenshots/listing1.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/listing1.png' height= 'auto' width= '400px'>
 </div>
 <br>
 
 The Listing Page shows an impressive slide at the top of the page with the images of the listed house, these images once inserted are saved in the [Firebase Storage](https://firebase.google.com/)
 
 <div align='center'>
-<img src='./assets/screenshots/listing2.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/listing2.png' height= 'auto' width= '400px'>
 </div>
 <br>
 
@@ -80,7 +80,7 @@ You can click on "Contact Landlord" to open the page to contact him/her.
 ### Contact Landlord
 
 <div align='center'>
-<img src='./assets/screenshots/contactLandlord.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/contactLandlord.png' height= 'auto' width= '400px'>
 </div>
 <br>
 
@@ -90,7 +90,7 @@ In this page you can write a message and once you click on "Send Message" the em
 ### Profile Page
 
 <div align='center'>
-<img src='./assets/screenshots/profilePage.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/profilePage.png' height= 'auto' width= '400px'>
 </div>
 <br>
 
@@ -100,7 +100,7 @@ You can logout and there are your listings, you can edit or delete them.
 
 ### Create Listing
 <div align='center'>
-<img src='./assets/screenshots/profilePage.png' height= 'auto' width= '400px'>
+<img src='./src/assets/screenshots/profilePage.png' height= 'auto' width= '400px'>
 </div>
 <br>
 
