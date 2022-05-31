@@ -10,6 +10,7 @@ import {
   orderBy,
   deleteDoc,
 } from 'firebase/firestore';
+import { getStorage, ref, deleteObject } from 'firebase/storage';
 import { db } from '../firebase.config';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -105,7 +106,41 @@ function Profile() {
   };
 
   const onDelete = async (listingId) => {
-    if(window.confirm('Are you sure you want to delete?')){
+    if (window.confirm('Are you sure you want to delete?')) {
+      //DELETE PICTURES FROM FIREBASE STORAGE
+      const storage = getStorage();
+
+      const imagesToDelete = listings.filter(
+        (listing) => listing.id === listingId
+      );
+      console.log(imagesToDelete);
+
+      const imagesArrUrls = imagesToDelete[0].data?.imgUrls;
+      console.log(imagesArrUrls);
+
+      imagesArrUrls.forEach((urlToDelete) => {
+        //split inserisce in un nuovo array, se non trova il carattere con cui splittare inserisce semplicemente la stringa nel'array
+        let fileName = urlToDelete.split('/').pop().split('#')[0].split('?')[0];
+
+        //REPLACE "2%F" IN THE URL WITH "/" SO I CREATE A PATH ALREADY
+        fileName = fileName.replace('%2F', '/');
+        console.log(fileName);
+        //${userId}-${imgName}-uidv4
+        //const fileName = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`; (r.139 CreateListing.jsx) NELLO STORAGE LI HO SALVATI COSI
+
+        //CREATE A REFERENCE TO THE FILE TO DELETE
+        const imgToDeleteRef = ref(storage, `${fileName}`);
+
+        //DELETE THE FILE
+        deleteObject(imgToDeleteRef)
+          .then(() => {
+            toast.success('Files removed');
+          })
+          .catch((error) => {
+            toast.error(error);
+          });
+      });
+      //PER TESTARE CHE LE IMMAGINI VENGANO CANCELLATE DALLO STORAGE, COMMENTA LA PARTE VOCE VAI A CANCELLARE IL LISTING DAL FIRESTORE. COSI FACENDO VEDRAI IL LISTING SENZA L'IMMAGINE PERCHE' SONO STATE CANCELLATE
 
       //DELETE ON FIRESTORE DB
       const docRef = doc(db, 'listings', listingId)
@@ -117,12 +152,11 @@ function Profile() {
       //risettando il listings state viene rerenderizzata la pagina e quindi aggiornata la lista nel UI (da r.180)
       setListings(updatedListings)
       toast.success('Successfully deleted listing')
-      
     }
-  }
+  };
 
   const onEdit = (listingId) => navigate(`/edit-listing/${listingId}`);
-  
+
   console.log(listings);
 
   return (

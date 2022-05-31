@@ -56,14 +56,14 @@ function ListingItem({ listing, id, onEdit, onDelete }) {
       </Link>
 
       {/* se viene passato onEdit come prop allora vedremo l'icon delete (da Profile.jsx) */}
-      {onEdit && <EditIcon className="editIcon" onClick={() => onEdit(id)} />}
+      {onEdit && <EditIcon className="editIcon" onClick={() => onEdit()} />}
 
       {/* se viene passato onDelete come prop allora vedremo l'icon delete (da Profile.jsx) */}
       {onDelete && (
         <DeleteIcon
           className="removeIcon"
           fill="rgb(231,76,60)"
-          onClick={() => onDelete(id, listing.name)}
+          onClick={() => onDelete()}
         />
       )}
     </li>
