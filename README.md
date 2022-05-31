@@ -13,7 +13,7 @@
          <li><a href="#listing-page">Listing Page</a></li>
         <li><a href="#contact-landlord">Contact Landlord Page</a></li>
         <li><a href="#profile-page">Profile Page</a></li>
-        <li><a href="#create-listing-page">Create Listing Page</a></li>
+        <li><a href="#create-listing">Create Listing Page</a></li>
         <li><a 
         href="#built-with">Built With</a></li>
       </ul>
