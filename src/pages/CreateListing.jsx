@@ -100,7 +100,7 @@ function CreateListing() {
       try {
         //INSERTED WITH GEOLOCATION ENABLED
         const response = await fetch(
-          `http://api.positionstack.com/v1/forward?access_key=${process.env.REACT_APP_GEOCODE_API_KEY}&query=${address}`
+          `https://api.positionstack.com/v1/forward?access_key=${process.env.REACT_APP_GEOCODE_API_KEY}&query=${address}`
         );
 
         const data = await response.json();
