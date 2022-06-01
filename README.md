@@ -25,6 +25,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
+    <li><a href="#issues">Issues</a></li>
     <li><a href="#links-contacts">Links & Contacts</a></li>
   </ol>
 </details>
@@ -142,6 +143,9 @@ To start the application you need to have Node.js installed on your computer, so
 ```
 
 5. Open build/index.html
+
+## Issues
+I disabled the automatic geolocation with positionstack because the access key can only be used with HTTP requests with a free-base plan, it will therefore only work in development, while in production it is necessary to make the HTTPS request that in free-base plan it is not guaranteed
 
 ## Links & Contacts
 Linkedin - [Alessandro Parrilla](https://www.linkedin.com/in/alessandro-parrilla-994931222/) - alessandro.parrilla.dev@gmail.com

@@ -228,7 +228,7 @@ function EditListing() {
     const imgUrls = await Promise.all(
       // loop trough images array
       // added question mark in order not to encounter an error in case of undefined of images arr
-      [...images]?.map((image) => storeImage(image))
+      images?.map((image) => storeImage(image))
     ).catch(() => {
       setLoading(false);
       toast.error('Images not uploaded');
@@ -279,11 +279,24 @@ function EditListing() {
 
     //Files
     if (e.target.files) {
-      setFormData((prevState) => ({
-        ...prevState,
-        images: e.target.files,
-         //list of images similar to arr, if images is emtpy it will be undefined
-      }));
+      // VALIDATION IMAGE SIZE > 3MB
+      const imagesArrToValidate = [...e.target.files];
+      const imagesValidated = [];
+      console.log(imagesArrToValidate);
+      imagesArrToValidate.forEach((img) => {
+        let maxFileSize = 1 * 1024 * 1024; //3MB
+        let imgFileSize = img.size;
+        console.log(imgFileSize);
+        if (imgFileSize > maxFileSize) {
+          toast.error('Images must be less than 3MB size for each');
+        } else {
+          imagesValidated.push(img);
+          setFormData((prevState) => ({
+            ...prevState,
+            images: imagesValidated, //list of images similar to arr
+          }));
+        }
+      });
     }
     // console.log(e.target.files);
     // se il click avviene nel input:file dopo aver selezionato l'img o imgs in console appare un similar-array con le immagini

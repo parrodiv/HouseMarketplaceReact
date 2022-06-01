@@ -184,7 +184,7 @@ function CreateListing() {
 
     const imgUrls = await Promise.all(
       // loop trough images array
-      [...images].map((image) => storeImage(image))
+      images.map((image) => storeImage(image))
     ).catch(() => {
       setLoading(false);
       toast.error('Images not uploaded');
@@ -234,10 +234,24 @@ function CreateListing() {
 
     //Files
     if (e.target.files) {
-      setFormData((prevState) => ({
-        ...prevState,
-        images: e.target.files, //list of images similar to arr
-      }));
+      // VALIDATION IMAGE SIZE > 3MB
+      const imagesArrToValidate = [...e.target.files]
+      const imagesValidated = []
+      console.log(imagesArrToValidate);
+      imagesArrToValidate.forEach((img) => {
+        let maxFileSize = 3 * 1024 * 1024; //3MB
+        let imgFileSize = img.size
+        console.log(imgFileSize)
+        if(imgFileSize > maxFileSize){
+          toast.error('Images must be less than 3MB size for each')
+        }else {
+          imagesValidated.push(img)
+          setFormData((prevState) => ({
+            ...prevState,
+            images: imagesValidated //list of images similar to arr
+          }));
+        }
+      })
     }
     // console.log(e.target.files);
     // se il click avviene nel input:file dopo aver selezionato l'img o imgs in console appare un similar-array con le immagini
@@ -387,6 +401,7 @@ function CreateListing() {
           <textarea
             type="text"
             className="formInputAddress"
+            placeholder='Via Gramsci 7, Milano 20122'
             id="address"
             value={address}
             onChange={onMutate}
@@ -479,7 +494,8 @@ function CreateListing() {
 
           <label className="formLabel">Images</label>
           <p className="imagesInfo">
-            The first image will be the cover (max 6).
+            The first image will be the cover (max 6). <br />
+             MAX 3MB per image
           </p>
           <input
             type="file"
