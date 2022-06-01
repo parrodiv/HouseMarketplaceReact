@@ -65,7 +65,7 @@ function EditListing() {
       toast.error('You cannot edit that listing')
       navigate('/')
     }
-  }, [] )
+  }, [auth.currentUser.uid, listing, navigate] )
 
   // Fetch listing to edit from firestore
   useEffect(() => {
@@ -201,6 +201,8 @@ function EditListing() {
                 break;
               case 'running':
                 console.log('Upload is running');
+                break;
+              default: 
                 break;
             }
           },

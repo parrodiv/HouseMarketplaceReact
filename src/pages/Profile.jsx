@@ -134,7 +134,7 @@ function Profile() {
         //DELETE THE FILE
         deleteObject(imgToDeleteRef)
           .then(() => {
-            toast.success('Files removed');
+            console.log(`${fileName} removed`);
           })
           .catch((error) => {
             toast.error(error);

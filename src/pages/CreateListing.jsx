@@ -32,7 +32,7 @@ const initialFormState = {
 
 function CreateListing() {
   // eslint-disable-next-line
-  const [geolocationEnabled, setGeolocationEnabled] = useState(true);
+  const [geolocationEnabled, setGeolocationEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
 
@@ -100,8 +100,9 @@ function CreateListing() {
       try {
         //INSERTED WITH GEOLOCATION ENABLED
         const response = await fetch(
-          `https://api.positionstack.com/v1/forward?access_key=${process.env.REACT_APP_GEOCODE_API_KEY}&query=${address}`
+          `http://api.positionstack.com/v1/forward?access_key=${process.env.REACT_APP_GEOCODE_API_KEY}&query=${address}`
         );
+        //nel deploy non funzionerà perchè il piano free non mi permette di utilizzare HTTPS
 
         const data = await response.json();
 
@@ -157,6 +158,8 @@ function CreateListing() {
                 break;
               case 'running':
                 console.log('Upload is running');
+                break;
+              default:
                 break;
             }
           },
