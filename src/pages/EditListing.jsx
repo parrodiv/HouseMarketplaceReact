@@ -32,6 +32,7 @@ const initialFormState = {
 };
 
 function EditListing() {
+  // eslint-disable-next-line
   const [geolocationEnabled, setGeolocationEnabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
@@ -67,32 +68,31 @@ function EditListing() {
   }, [] )
 
   // Fetch listing to edit from firestore
-  useEffect( () => {
-    setLoading(true)
+  useEffect(() => {
+    setLoading(true);
 
     const fetchListing = async () => {
       try {
         //ottengo uno specifico listing grazie al listingId contenuto nel URL
-        const docRef = doc(db, 'listings', params.listingId)
+        const docRef = doc(db, 'listings', params.listingId);
         const docSnap = await getDoc(docRef);
 
-        if(docSnap.exists()){
-          setListing(docSnap.data())
+        if (docSnap.exists()) {
+          setListing(docSnap.data());
           // l'address è stato inserito nella prop location (vedi CreateListing.jsx r.200), quindi la prop address non è presente nel doc su firestore, abbiamo pubblicato solo location, qui invece inseriamo la prop address siccome nel input address il suo value sarà preso dalla variabile address estratta dal formData
-          setFormData({...docSnap.data(), address: docSnap.data().location})
-          setLoading(false)
+          setFormData({ ...docSnap.data(), address: docSnap.data().location });
+          setLoading(false);
         }
       } catch (error) {
-        setLoading(false)
-        toast.error(`Listing does not exist: ${error.message}`)
+        setLoading(false);
+        toast.error(`Listing does not exist: ${error.message}`);
         console.log(error);
-        navigate('/')
+        navigate('/');
       }
-      
-    }
+    };
 
-    fetchListing()
-  }, [params.listingId, navigate])
+    fetchListing();
+  }, [params.listingId, navigate, auth.currentUser.uid]);
 
   // Sets userRef to legged in user
   useEffect(() => {

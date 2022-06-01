@@ -22,7 +22,6 @@ function Listing() {
   const [loading, setLoading] = useState(true);
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
 
-  const navigate = useNavigate();
   const params = useParams();
   const auth = getAuth();
 
@@ -71,9 +70,6 @@ function Listing() {
       <div
         className="shareIconDiv"
         onClick={() => {
-          {
-            /* COPY TEXT window.location.href = URL */
-          }
           navigator.clipboard.writeText(window.location.href);
           setShareLinkCopied(true);
           setTimeout(() => {
